@@ -511,5 +511,5 @@ except ImportError:
     __builtin__ = builtins
 
 # Automatically add some convenience functions to __builtin__
-for n in autobuiltins:
-    exec('__builtin__.__dict__["%s"] = %s' % (n,n)) in globals()
+# for n in autobuiltins:
+    # exec('__builtin__.__dict__["%s"] = %s' % (n,n)) in globals()

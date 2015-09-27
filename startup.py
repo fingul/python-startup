@@ -113,11 +113,6 @@ del editorbase
 # The place to store your command history between sessions
 histfile = os.path.expanduser('~/.python_history')
 
-# Functions automatically added to the builtins namespace so that you can
-# use them in the debugger and other unusual environments
-autobuiltins = ['edit', 'which', 'ls', 'cd', 'mv', 'cp', 'rm', 'help', 'rmdir',
-                'ln', 'pwd', 'pushd', 'popd', 'env', 'mkdir']
-
 ##### Now set up the interactive features that I like #####
 
 # Colorize the prompts if possible (This is probably non-portable muck)
@@ -186,31 +181,6 @@ try:
     del __builtin__, deep_reload
 except ImportError:
     pass
-
-# Make an "edit" command that sends you to the right file *and line number*
-# to edit a module, class, method, or function!
-# Note that this relies on my enhanced version of which().
-def edit(object, editor=EDITOR):
-    """Edit the source file from which a module, class, method, or function
-    was imported.
-    Usage:  >>> edit(mysteryObject)
-    """
-
-    if type(object) is type(""):
-        fname = object; lineno = 1
-        print(editor % locals())
-        subprocess.Popen(editor % locals(), shell=True)
-        return
-
-    ret = which(object)
-    if not ret:
-        print("Can't edit that!")
-        return
-    fname, lineno = ret
-    if fname[-4:] == '.pyc' or fname[-4:] == '.pyo':
-        fname = fname[:-1]
-    print(editor % locals())
-    subprocess.Popen(editor % locals(), shell=True)
 
 def timed(func):
     @functools.wraps(func)
@@ -374,6 +344,7 @@ def cp(*args):
             except os.error as detail:
                 print("%s: %s" % (detail[1], filename))
 
+
 def cpr(src, dst):
     """Recursively copy a directory tree to a new location
     Usage:  >>> cpr('directory0', 'newdirectory')
@@ -381,11 +352,13 @@ def cpr(src, dst):
     """
     shutil.copytree(src, dst)
 
+
 def ln(src, dst):
     """Create a symbolic link.
     Usage:  >>> ln('existingfile', 'newlink')
     """
     os.symlink(src, dst)
+
 
 def lnh(src, dst):
     """Create a hard file system link.
@@ -393,37 +366,12 @@ def lnh(src, dst):
     """
     os.link(src, dst)
 
+
 def pwd():
     """Print current working directory path.
     Usage:  >>> pwd()
     """
     print(os.getcwd())
-
-cdlist = [home]
-def cd(directory = -1):
-    """Change directory. Environment variables are expanded.
-    Usage:
-    cd('rel/$work/dir') change to a directory relative to your own
-    cd('/abs/path')     change to an absolute directory path
-    cd()                list directories you've been in
-    cd(int)             integer from cd() listing, jump to that directory
-    """
-    global cdlist
-    if type(directory) is types.IntType:
-        if directory in range(len(cdlist)):
-            cd(cdlist[directory])
-            return
-        else:
-            pprint(cdlist)
-            return
-    directory = _glob(directory)[0]
-    if not os.path.isdir(directory):
-        print(directory + ' is not a directory')
-        return
-    directory = _expandpath(directory)
-    if directory not in cdlist:
-        cdlist.append(directory)
-    os.chdir(directory)
 
 def env():
     """List environment variables.
@@ -435,81 +383,9 @@ def env():
         envdict[key] = value
     pprint(envdict)
 
-interactive_dir_stack = []
-def pushd(directory=home):
-    """Place the current dir on stack and change directory.
-    Usage:  >>> pushd(['dirname'])   (brackets mean [optional] argument)
-                pushd()  goes home.
-    """
-    global interactive_dir_stack
-    interactive_dir_stack.append(os.getcwd())
-    cd(directory)
-
-def popd():
-    """Change to directory popped off the top of the stack.
-    Usage:  >>> popd()
-    """
-    global interactive_dir_stack
-    try:
-        cd(interactive_dir_stack[-1])
-        print(interactive_dir_stack[-1])
-        del interactive_dir_stack[-1]
-    except IndexError:
-        print('Stack is empty')
-
-def syspath():
-    """Print the Python path.
-    Usage:  >>> syspath()
-    """
-    import sys
-    pprint(sys.path)
-
-def which(object):
-    """Print the source file from which a module, class, function, or method
-    was imported.
-
-    Usage:    >>> which(mysteryObject)
-    Returns:  Tuple with (file_name, line_number) of source file, or None if
-              no source file exists
-    Alias:    whence
-    """
-    object_type = type(object)
-    if object_type is types.ModuleType:
-        if hasattr(object, '__file__'):
-            print('Module from', object.__file__)
-            return (object.__file__, 1)
-        else:
-            print('Built-in module.')
-    elif object_type is types.ClassType:
-        if object.__module__ == '__main__':
-            print('Built-in class or class loaded from $PYTHONSTARTUP')
-        else:
-            print('Class', object.__name__, 'from', \
-                    sys.modules[object.__module__].__file__)
-            # Send you to the first line of the __init__ method
-            return (sys.modules[object.__module__].__file__,
-                    object.__init__.im_func.func_code.co_firstlineno)
-    elif object_type in (types.BuiltinFunctionType, types.BuiltinMethodType):
-        print("Built-in or extension function/method.")
-    elif object_type is types.FunctionType:
-        print('Function from', object.func_code.co_filename)
-        return (object.func_code.co_filename, object.func_code.co_firstlineno)
-    elif object_type is types.MethodType:
-        print('Method of class', object.im_class.__name__, 'from', )
-        fname = sys.modules[object.im_class.__module__].__file__
-        print(fname)
-        return (fname, object.im_func.func_code.co_firstlineno)
-    else:
-        print("argument is not a module or function.")
-    return None
-whence = which
 
 try:
     import __builtin__
 except ImportError:
     import builtins
     __builtin__ = builtins
-
-# Automatically add some convenience functions to __builtin__
-# for n in autobuiltins:
-    # exec('__builtin__.__dict__["%s"] = %s' % (n,n)) in globals()

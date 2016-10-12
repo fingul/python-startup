@@ -14,7 +14,7 @@ Installation
 
 Get code from Github::
 
-    git clone https://github.com/jezdez/python-startup.git ~/.python
+    git clone https://github.com/fingul/python-startup.git ~/.python
 
 Put this in your shell profile::
 

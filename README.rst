@@ -14,6 +14,12 @@ Get code from Github::
 
     git clone git://github.com/fingul/python-startup.git ~/Dropbox/src/python-startup
 
+Edit & commit & push
+------------
+
+    cd ~/Dropbox/src/python-startup
+    git add . && git commit -m . &&  git push -u origin master
+
 Credits
 -------
 

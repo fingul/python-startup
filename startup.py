@@ -390,5 +390,5 @@ except ImportError:
     import builtins
     __builtin__ = builtins
     
-p = pprint.pprint
+p = pprint
 

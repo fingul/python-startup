@@ -1,26 +1,21 @@
 Python startup files
 ====================
 
-These are the startup files that I use for the interactive Python shell.
+mkdir -p ~/.ipython/profile_default/startup/    
+ln -sf ~/Dropbox/src/python-startup/startup.py ~/.ipython/profile_default/startup/
 
-Credits
--------
+> why? `export PYTHONSTARTUP=xxx.py` not working properly, when using auto completion. (ex: import o [tab])
 
-This is entirely not my work (except a few fixes), all credits to the authors
-as noted in the different files.
 
 Installation
 ------------
 
 Get code from Github::
 
-    git clone https://github.com/fingul/python-startup.git ~/.python
+    git clone git://github.com/fingul/python-startup.git ~/Dropbox/src/python-startup
 
-Put this in your shell profile::
+Credits
+-------
 
-    export PYTHONSTARTUP=$HOME/.python/startup.py
-
-In case you haven't saved these files in $HOME/.python make sure to set
-PYTHONUSERDIR approppriately, too::
-
-    export PYTHONUSERDIR=/path/to/dir
+This is entirely not my work (except a few fixes), all credits to the authors
+as noted in the different files.

@@ -44,6 +44,11 @@ PYTHONUSERDIR approppriately, too::
 #     - Robin Friedrich
 #  """
 
+import os
+_current_file = os.path.abspath(__file__) 
+print('------------')
+print("autoimported {}".format(_current_file))
+print('------------')
 
 import functools
 import glob
@@ -53,6 +58,7 @@ import subprocess
 import sys
 import time
 import types
+import datetime
 
 try:
     from pydoc import help
@@ -391,4 +397,31 @@ except ImportError:
     __builtin__ = builtins
     
 p = pprint
+print("p = pprint.pprint")
 
+
+try:
+    from collections import OrderedDict as OD
+    print("from collections import OrderedDict as OD")
+except:
+    traceback.print_exception()
+
+
+try:
+    from addict import Dict as D
+    print("from addict import Dict as D")
+except:
+    print("please run 'pip install addict''")
+
+
+def now_str():
+    return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+print("now_str()=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')")    
+
+try:
+    import readline
+except ImportError:
+    print("Module readline not available.")
+else:
+    import rlcompleter
+    readline.parse_and_bind("tab: complete")
